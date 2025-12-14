@@ -1,0 +1,202 @@
+/* header.css
+   Fixed header + navigation layout and styles
+   === merged with checkbox-hack (no-JS mobile menu)
+*/
+
+/* ---------- Header base ---------- */
+.site-header {
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: var(--header-height);
+  background: rgba(11, 11, 11, 0.85);
+  backdrop-filter: blur(2px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  transform: translateY(0);
+  transition: transform var(--nav-transition);
+  will-change: transform;
+}
+
+.site-header.hidden {
+  transform: translateY(-110%);
+  pointer-events: none;
+}
+
+/* nav layout */
+.nav {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 var(--site-padding);
+}
+
+.brand {
+  font-family: 'Roboto Mono', monospace;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--accent);
+  text-decoration: none;
+}
+
+/* nav list: right aligned links */
+.nav-list {
+  margin-left: auto;
+  display: flex;
+  gap: 18px;
+  list-style: none;
+  padding: 0;
+  align-items: center;
+}
+
+.nav-list a {
+  font-family: 'Roboto Mono', monospace;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.nav-list a.active {
+  text-decoration: underline;
+}
+
+/* ---------- Checkbox hack base (visually-hidden accessible checkbox) ---------- */
+/* keep the input in accessibility tree but visually hide it */
+.nav-check {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+/* small helper for visually-hidden text */
+.sr-only {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  border: 0;
+  white-space: nowrap;
+}
+
+/* ---------- Hamburger label (styled) ---------- */
+/* default: hidden on desktop; shown in the mobile media query */
+.nav-toggle {
+  margin-left: auto;
+  display: none;
+  width: 44px;
+  height: 36px;
+  background: transparent;
+  border: 0;
+  position: relative;
+  cursor: pointer;
+  color: var(--text);
+  align-items: center;
+  justify-content: center;
+}
+
+/* Draw three bars: top/bottom via pseudo elements, middle via .burger span */
+.nav-toggle::before,
+.nav-toggle::after,
+.nav-toggle .burger {
+  content: "";
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: currentColor;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  transition: transform .28s ease, opacity .28s ease;
+}
+
+.nav-toggle::before {
+  top: 10px;
+}
+
+.nav-toggle .burger {
+  top: 17px;
+}
+
+.nav-toggle::after {
+  top: 24px;
+}
+
+/* When the checkbox is checked: morph to X */
+.nav-check:checked+.nav-toggle::before {
+  transform: translateX(-50%) translateY(7px) rotate(45deg);
+}
+
+.nav-check:checked+.nav-toggle::after {
+  transform: translateX(-50%) translateY(-7px) rotate(-45deg);
+}
+
+.nav-check:checked+.nav-toggle .burger {
+  opacity: 0;
+  transform: translateX(-50%) scaleX(.2);
+}
+
+li a {
+  margin: 0;
+  padding: 4px 10px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  transition: border-color 0.5s ease;
+}
+
+li a:hover {
+  border-color: var(--accent);
+}
+
+#active a{
+  border : 1px solid var(--accent);
+  border-radius: 8px;
+}
+
+/* ---------- Mobile behavior (small screens) ---------- */
+@media (max-width:820px) {
+
+  /* show the hamburger */
+  .nav-toggle {
+    display: block;
+  }
+
+  /* default mobile nav: hidden until checkbox checked */
+  .nav-list {
+    display: none;
+    position: absolute;
+    right: 10px;
+    top: calc(var(--header-height) + 8px);
+    background: var(--panel);
+    padding: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.03);
+    flex-direction: column;
+    gap: 8px;
+    z-index: 70;
+    min-width: 160px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  }
+
+  /* when checkbox is checked the sibling .nav-list becomes visible */
+  .nav-check:checked~.nav-list {
+    display: flex;
+  }
+
+  /* improve tap targets on mobile */
+  .nav-list a {
+    display: block;
+  }
+}

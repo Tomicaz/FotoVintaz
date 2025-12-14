@@ -1,0 +1,42 @@
+/* responsive.css
+   Mobile-first responsive tweaks and helpers
+*/
+@media (max-width:820px) {
+  .nav-list {
+    display: none;
+    position: absolute;
+    right: 10px;
+    top: calc(var(--header-height) + 8px);
+    background: var(--panel);
+    padding: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.03);
+    flex-direction: column;
+    gap: 8px
+  }
+
+  .nav-toggle {
+    display: block;
+  }
+
+  .hero-image.full-bleed {
+    height: 44vh;
+  }
+}
+
+@media (max-width:420px) {
+  .hero-title {
+    font-size: 20px;
+  }
+
+  .container {
+    padding: 16px;
+  }
+
+  .about-section {
+    padding: 20px 16px 100px;
+  }
+
+  .timeline-section {
+    padding: 30px 16px;
+  }
+}

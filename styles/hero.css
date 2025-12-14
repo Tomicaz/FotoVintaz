@@ -1,0 +1,51 @@
+/* hero.css
+
+Hero image, full-bleed helper, and hero text positioning
+
+*/
+
+.hero {
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-image {
+  width: 100%;
+  height: 100vh;
+  display: block;
+  object-fit: cover;
+}
+
+.hero-image.full-bleed {
+  width: 100vw;
+  max-width: none;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  object-fit: cover;
+}
+
+.hero-moto {
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  text-align: left;
+  padding: 8px;
+}
+
+.hero-title {
+  font-family: 'Roboto Mono', monospace;
+  font-weight: 700;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-size: clamp(20px, 3.2vw, 48px);
+  line-height: 1;
+  margin: 0;
+}
+
+article p {
+  padding: 10px;
+  border: 1px solid var(--accent);
+  border-radius: 10px;
+}

@@ -1,0 +1,52 @@
+/* base.css
+   Variables, reset, layout container and main padding.
+*/
+:root {
+  --bg: #0f0f0f;
+  --panel: #1b1b1b;
+  --text: #bfbfbf;
+  --accent: #d9d9d9;
+
+  --max-width: 1200px;
+  --header-height: 82px;
+  --site-padding: 28px;
+  --radius: 0;
+  --nav-transition: 800ms cubic-bezier(.2, .9, .2, 1);
+  --bp-sm: 520px;
+  --bp-md: 900px;
+  --bp-lg: 1200px;
+}
+
+/* Reset / base */
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+
+  margin: 0;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.6;
+}
+
+
+
+/* Container + main offset for header */
+.container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: var(--site-padding);
+}
+
+main {
+  position: relative;
+  top: -82px;
+  padding-top: var(--header-height);
+}

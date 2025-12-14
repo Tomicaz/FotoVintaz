@@ -1,0 +1,45 @@
+﻿.prints-wrap {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+/* animate the wrapper (not the img) */
+.print {
+    opacity: 0;
+    transform: translateY(-18px);
+    transition: opacity 420ms ease, transform 420ms ease;
+    will-change: opacity, transform;
+    display: block;
+    /* preserves layout so images don't jump */
+    background: transparent;
+}
+
+.print.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ensure image fills its container and doesn't create layout shifts */
+.film-frame {
+    overflow: hidden;
+    display: block;
+}
+
+.film-frame img {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+
+/* optional: caption styling so it doesn't flash separately */
+.print-caption {
+    opacity: 0;
+    transition: opacity 300ms ease 200ms;
+    /* small delay so caption appears after image */
+}
+
+.print.visible .print-caption {
+    opacity: 1;
+}

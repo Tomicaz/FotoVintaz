@@ -1,0 +1,81 @@
+/* gallery.css
+   Prints grid + film-frame styling
+*/
+
+#active a{
+    border : 1px solid var(--accent);
+    padding: 4px 10px 4px 10px;
+    border-radius: 8px;
+}
+
+.prints-container {
+    background-color: var(--accent);
+    margin: 0;
+    padding: 112px 10% 10%;
+}
+
+.prints-container h1 {
+    color: var(--bg);
+    padding-top: 40px;
+
+}
+
+.prints-container p {
+    color: var(--bg);
+    padding-top: 14px;
+    padding-bottom: 100px;
+}
+
+
+.prints-intro {
+    margin-bottom: 18px;
+    color: var(--text);
+}
+
+.prints-wrap {
+    display: grid;
+    column-gap: 14%;
+    row-gap: 140px;
+    grid-template-columns: 1fr;
+    align-items: center;
+}
+
+.prints-wrap p{
+    font-family: "Poppins", sans-serif;
+    font-weight: bold;
+}
+
+@media (min-width:700px) {
+    .prints-wrap {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.film-frame {
+    padding: 40px 24px 40px 24px;
+    border: 1.5px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 3px 3px 3px darkgray;
+    display: block;
+    border-radius: var(--radius);
+    background-color: ghostwhite;
+}
+
+.film-frame img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+}
+
+a {
+    text-decoration: none;
+}
+
+.print-caption {
+    font-size: 24px;
+    color: var(--text);
+    text-align: center;
+    font-family: 'Roboto Mono', monospace;
+    padding-top: 20px !important;
+    padding-bottom: 0 !important;
+}
