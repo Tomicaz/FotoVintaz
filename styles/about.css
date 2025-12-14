@@ -10,7 +10,7 @@
 
 .about-section {
     position: relative;
-    padding: 240px 30px 200px;
+    padding: 240px 0 200px 0;
     background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(../images/about.jpg);
     background-size: cover;
     background-position: top 10% center;
@@ -35,10 +35,15 @@
 .timeline-section {
     background: var(--accent);
     color: var(--bg);
-    padding: 60px 28px;
+    padding: 120px 28px;
 }
 
 .timeline-section h2,
 .timeline-section p {
     color: var(--bg);
+}
+
+.equipment{
+    padding: 120px 0 40px 0;
+
 }

@@ -45,6 +45,16 @@ body {
   padding: var(--site-padding);
 }
 
+.copyright a{
+  text-decoration: none;
+  color: var(--text);
+  display: block;
+  text-align: center;
+  padding: 40px 0 40px 0;
+  margin: 80px 6% 0 6%;
+  border-top: 2px solid var(--accent);
+}
+
 main {
   position: relative;
   top: -82px;

@@ -3,7 +3,7 @@
 */
 h1,
 h2,
-h3 {
+h3{
     font-family: 'Roboto Mono', monospace;
     font-weight: 600;
     text-transform: uppercase;
@@ -11,7 +11,7 @@ h3 {
     margin: 0 0 12px 0;
 }
 
-p, button{
+p, button, a{
     font-family: 'Roboto Mono', monospace;
     margin: 0 0 14px 0;
     color: var(--text);
