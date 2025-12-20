@@ -23,8 +23,8 @@
 
 .gv-image {
   display: block; transition: opacity 320ms ease; user-select: none; -webkit-user-drag: none;
-  max-width: 100vw; max-height: 88vh; box-shadow: 0 8px 30px rgba(0,0,0,0.5);
-  object-fit: contain; opacity: 0; border: 20px solid white; box-sizing: border-box;
+  max-width: 100vw; max-height: 70vh; box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+  object-fit: contain; opacity: 0;
 }
 
 .gv-image.gv-loaded { opacity: 1; }
@@ -55,7 +55,7 @@
 
 @media (max-width:600px) {
   .gv-arrow { width: 44px; height: 44px; background: rgba(0,0,0,0.3); }
-  .gv-image { border-width: 20px; max-height: 82vh; }
+  .gv-image { max-height: 82vh; }
   .gv-caption { font-size: 12px; }
 }
 `;
@@ -94,7 +94,7 @@
   }
 
   function initHoverScale() {
-    const frames = document.querySelectorAll('.film-frame');
+    const frames = document.querySelectorAll('img');
     frames.forEach(f => {
       f.classList.add('gv-film-hover');
       f.onpointerenter = () => f.classList.add('gv-hovered');
@@ -150,7 +150,6 @@
       if (img.dataset.sizeLocked) return;
       const rect = img.getBoundingClientRect();
       if (rect.width > 0 && rect.height > 0) {
-        img.style.width = rect.width + 'px';
         img.style.height = rect.height + 'px';
         img.dataset.sizeLocked = 'true';
         // Delay revealing caption until the container is stable
