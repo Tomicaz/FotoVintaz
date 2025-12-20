@@ -1,9 +1,4 @@
-﻿.prints-wrap {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
-}
-
+﻿
 /* animate the wrapper (not the img) */
 .print {
     opacity: 0;
@@ -20,18 +15,6 @@
     transform: translateY(0);
 }
 
-/* ensure image fills its container and doesn't create layout shifts */
-.film-frame {
-    overflow: hidden;
-    display: block;
-}
-
-.film-frame img {
-    display: block;
-    width: 100%;
-    height: auto;
-    object-fit: cover;
-}
 
 /* optional: caption styling so it doesn't flash separately */
 .print-caption {

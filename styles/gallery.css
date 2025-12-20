@@ -1,10 +1,10 @@
 /* gallery.css
-   Prints grid + film-frame styling
+   Prints Masonry + film-frame styling
 */
 
-#active a{
-    border : 1px solid var(--accent);
-    padding: 4px 10px 4px 10px;
+#active a {
+    border: 1px solid var(--accent);
+    padding: 4px 10px;
     border-radius: 8px;
 }
 
@@ -17,51 +17,55 @@
 .prints-container h1 {
     color: var(--bg);
     padding-top: 40px;
-
 }
 
 .prints-container p {
     color: var(--bg);
     padding-top: 14px;
-    padding-bottom: 100px;
+    padding-bottom: 60px; /* Reduced to transition into the masonry better */
 }
 
-
-.prints-intro {
-    margin-bottom: 18px;
-    color: var(--text);
-}
+/* --- MASONRY LAYOUT START --- */
 
 .prints-wrap {
-    display: grid;
-    gap: 14%;
-    row-gap: 140px;
-    grid-template-columns: 1fr;
-    align-items: center;
+    /* Create columns */
+    column-count: 1;
+    column-gap: 40px; /* Space between columns */
+    width: 100%;
 }
 
-.prints-wrap p{
-    font-family: "Poppins", sans-serif;
-    font-weight: bold;
+/* Individual wrapper for each image + caption */
+.print-item {
+    display: inline-block; /* Essential to prevent items splitting across columns */
+    width: 100%;
+    margin-bottom: 40px; /* Vertical space between items */
+    break-inside: avoid; /* Standard way to prevent column breaks */
 }
 
-@media (min-width:700px) {
+@media (min-width: 700px) {
     .prints-wrap {
-        grid-template-columns: repeat(2, 1fr);
+        column-count: 2;
     }
 }
 
 
 
+/* --- MASONRY LAYOUT END --- */
 img {
     max-width: 100%;
     display: block;
+    height: auto; /* Ensures height scales proportionally */
     object-fit: cover;
-    padding: 40px 24px 40px 24px;
+    padding: 40px 24px 40px 24px; /* Reduced slightly for cleaner look */
     border: 1.5px solid rgba(0, 0, 0, 0.1);
-    box-shadow: 3px 3px 3px darkgray;
+    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.1); /* Softer shadow */
     border-radius: var(--radius);
     background-color: ghostwhite;
+}
+
+.prints-wrap img{
+    width: 100%;
+    box-sizing: border-box;
 }
 
 a {
@@ -69,10 +73,13 @@ a {
 }
 
 .print-caption {
-    font-size: 24px;
+    font-size: 18px; /* Slightly smaller for Pinterest aesthetic */
     color: var(--text);
     text-align: center;
     font-family: 'Roboto Mono', monospace;
-    padding-top: 20px !important;
-    padding-bottom: 0 !important;
+    font-weight: bold;
+    padding-top: 15px !important;
+    padding-bottom: 40px !important;
+    margin: 0;
 }
+
