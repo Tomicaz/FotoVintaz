@@ -15,7 +15,6 @@
   // --- 1. CLOUDINARY URL OPTIMIZER ---
   function getOptimizedUrl(url) {
     if (!url.includes('cloudinary.com')) return url;
-    // Requests WebP/AVIF, auto quality, and resizes to screen-friendly width
     return url.replace('/upload/', '/upload/q_auto,f_auto,w_2000,c_limit/');
   }
 
@@ -29,7 +28,7 @@
           const timeout = setTimeout(() => {
             target.classList.add('visible');
             dwellTimeouts.delete(target);
-          }, 500); // 0.5s requirement
+          }, 500);
           dwellTimeouts.set(target, timeout);
         } else {
           if (dwellTimeouts.has(target)) {
@@ -47,7 +46,7 @@
     });
   }
 
-  // --- 3. PRELOADING & GPU DECODING ---
+  // --- 3. PRELOADING ---
   async function preloadImage(index) {
     if (index < 0 || index >= prints.length) return;
     const rawUrl = prints[index].getAttribute('href');
@@ -70,6 +69,7 @@
     const anchor = prints[index];
     const thumb = anchor.querySelector('img');
     const fullSrc = getOptimizedUrl(anchor.getAttribute('href'));
+    const originalSrc = anchor.getAttribute('href'); // For opening in new tab
     const capElement = anchor.querySelector('.print-caption');
     const capText = capElement ? capElement.textContent : "";
 
@@ -81,6 +81,13 @@
 
     const imgContainer = document.createElement('div');
     imgContainer.className = 'gv-img-container';
+    imgContainer.style.cursor = 'zoom-in'; // Visual hint that it's clickable
+
+    // NEW FEATURE: Open full res on click
+    imgContainer.onclick = (e) => {
+      e.stopPropagation(); // Prevent closing the modal
+      window.open(originalSrc, '_blank');
+    };
 
     const thumbImg = document.createElement('img');
     thumbImg.className = 'gv-image';
@@ -146,11 +153,12 @@
     if (overlay) return;
     overlay = document.createElement('div');
     overlay.className = 'gv-overlay';
+    // Minimalist thin characters
     overlay.innerHTML = `
-      <button class="gv-close" aria-label="Close">&times;</button>
-      <button class="gv-arrow gv-arrow--left" aria-label="Prev">&#10094;</button>
+      <button class="gv-close" aria-label="Close">x</button>
+      <button class="gv-arrow gv-arrow--left" aria-label="Prev">&lt;</button>
       <div class="gv-viewer"></div>
-      <button class="gv-arrow gv-arrow--right" aria-label="Next">&#10095;</button>
+      <button class="gv-arrow gv-arrow--right" aria-label="Next">&gt;</button>
     `;
     document.body.appendChild(overlay);
     viewer = overlay.querySelector('.gv-viewer');

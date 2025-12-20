@@ -82,7 +82,7 @@ h1.prints-intro {
 }
 
 .gv-img-container { position: relative; width: 100%; height: auto; }
-.gv-image { display: block; width: 100%; height: auto; max-height: 75vh; object-fit: contain; }
+.gv-image { display: block; width: 100%; height: auto; max-height: 78vh; object-fit: contain; }
 .gv-image-full { position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.4s ease; }
 .gv-image-full.gv-loaded { opacity: 1; }
 .gv-modal-caption { position: absolute; top: 100%; margin-top: 15px; color: white; font-family: 'Roboto Mono', monospace; font-size: 13px; letter-spacing: 1px; }
