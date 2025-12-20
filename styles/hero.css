@@ -43,6 +43,43 @@ Hero image, full-bleed helper, and hero text positioning
   line-height: 1;
   margin: 0;
 }
+.hero h1 {
+  display: inline-block;
+  padding: 10em 21em 10em 0;  /* omni-directional padding */
+
+  background: radial-gradient(
+          ellipse at center,
+          rgba(0, 0, 0, 0.9) 0%,
+          rgba(0, 0, 0, 0.8575) 5%,
+          rgba(0, 0, 0, 0.815) 10%,
+          rgba(0, 0, 0, 0.7725) 15%,
+          rgba(0, 0, 0, 0.73) 20%,
+          rgba(0, 0, 0, 0.6875) 25%,
+          rgba(0, 0, 0, 0.645) 30%,
+          rgba(0, 0, 0, 0.6025) 35%,
+          rgba(0, 0, 0, 0.56) 40%,
+          rgba(0, 0, 0, 0.5175) 45%,
+          rgba(0, 0, 0, 0.475) 50%,
+          rgba(0, 0, 0, 0.4325) 55%,
+          rgba(0, 0, 0, 0.39) 60%,
+          rgba(0, 0, 0, 0.3475) 65%,
+          rgba(0, 0, 0, 0.305) 70%,
+          rgba(0, 0, 0, 0.2625) 75%,
+          rgba(0, 0, 0, 0.22) 80%,
+          rgba(0, 0, 0, 0.1775) 85%,
+          rgba(0, 0, 0, 0.135) 90%,
+          rgba(0, 0, 0, 0.0925) 95%,
+          rgba(0, 0, 0, 0.0) 100%
+  );
+
+  border-radius: 100px;
+  background-clip: padding-box;
+
+  text-align: center;
+  line-height: 1.2em; /* keeps multi-line headers neat */
+}
+
+
 
 article p {
   padding: 10px;
