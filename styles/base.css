@@ -17,9 +17,10 @@
   --bp-lg: 1200px;
 }
 
-/* Reset / base */
-* {
+*{
+  box-sizing: border-box;
 }
+
 
 html,
 body {

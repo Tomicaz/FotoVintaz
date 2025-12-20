@@ -34,7 +34,7 @@
 
 .prints-wrap {
     display: grid;
-    column-gap: 14%;
+    gap: 14%;
     row-gap: 140px;
     grid-template-columns: 1fr;
     align-items: center;
@@ -52,8 +52,9 @@
 }
 
 
-img {
 
+img {
+    max-width: 100%;
     display: block;
     object-fit: cover;
     padding: 40px 24px 40px 24px;

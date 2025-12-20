@@ -23,7 +23,7 @@
 
 .gv-image {
   display: block; transition: opacity 320ms ease; user-select: none; -webkit-user-drag: none;
-  max-width: 100vw; max-height: 70vh; box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+  max-width: 100vw; max-height: 78vh; box-shadow: 0 8px 30px rgba(0,0,0,0.5);
   object-fit: contain; opacity: 0;
 }
 
