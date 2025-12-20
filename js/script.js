@@ -94,7 +94,7 @@
   }
 
   function initHoverScale() {
-    const frames = document.querySelectorAll('img');
+    const frames = document.querySelectorAll('.prints-wrap img');
     frames.forEach(f => {
       f.classList.add('gv-film-hover');
       f.onpointerenter = () => f.classList.add('gv-hovered');

@@ -1,6 +1,6 @@
 ﻿
 /* animate the wrapper (not the img) */
-.print {
+.print{
     opacity: 0;
     transform: translateY(-18px);
     transition: opacity 420ms ease, transform 420ms ease;

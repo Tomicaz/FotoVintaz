@@ -35,12 +35,22 @@
 .timeline-section {
     background: var(--accent);
     color: var(--bg);
-    padding: 120px 28px;
+    padding-bottom: 70px;
 }
 
 .timeline-section h2,
 .timeline-section p {
     color: var(--bg);
+}
+
+.timeline-section h2{
+    padding-bottom: 40px;
+}
+
+.timeline-section p{
+    padding: 10px 30px 10px 30px  ;
+
+    border-top: 2px solid var(--bg);
 }
 
 .equipment{
