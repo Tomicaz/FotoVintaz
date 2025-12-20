@@ -10,10 +10,10 @@
     /* High-res default for Desktop (1920px width) */
     background-image:
             linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-            url("https://res.cloudinary.com/drl126ccs/image/upload/f_auto,q_auto,w_1920/hero_rh485e");
+            url("https://res.cloudinary.com/drl126ccs/image/upload/f_auto,q_auto,w_1920/event14_hh5wqo");
 
     background-size: cover;
-    background-position: center;
+    background-position: top 24% center;
     background-repeat: no-repeat;
 }
 
@@ -24,7 +24,7 @@
     .hero {
         background-image:
                 linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-                url("https://res.cloudinary.com/drl126ccs/image/upload/f_auto,q_auto,w_1200/hero_rh485e");
+                url("https://res.cloudinary.com/drl126ccs/image/upload/f_auto,q_auto,w_1200/event14_hh5wqo");
     }
 }
 
@@ -33,7 +33,7 @@
     .hero {
         background-image:
                 linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-                url("https://res.cloudinary.com/drl126ccs/image/upload/f_auto,q_auto,w_800/hero_rh485e");
+                url("https://res.cloudinary.com/drl126ccs/image/upload/f_auto,q_auto,w_800/event14_hh5wqo");
         height: 60vh; /* Shorter height for better mobile UX */
     }
 }
