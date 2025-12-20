@@ -1,88 +1,78 @@
-/* hero.css
+/* hero.css */
 
-Hero image, full-bleed helper, and hero text positioning
-
-*/
-
+/* 1. MAIN HERO SETTINGS */
 .hero {
-  position: relative;
-  overflow: hidden;
+    position: relative;
+    width: 100%;
+    /* Using 80vh to keep it large and impactful, but not overlapping content too much */
+    height: 100vh;
+
+    /* High-res default for Desktop (1920px width) */
+    background-image:
+            linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+            url("https://res.cloudinary.com/drl126ccs/image/upload/f_auto,q_auto,w_1920/hero_rh485e");
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
-.hero-image {
-  width: 100%;
-  height: 100vh;
-  display: block;
-  object-fit: cover;
+/* 2. RESPONSIVE BACKGROUNDS (Optimization) */
+
+/* Tablets - Load 1200px image */
+@media (max-width: 1200px) {
+    .hero {
+        background-image:
+                linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+                url("https://res.cloudinary.com/drl126ccs/image/upload/f_auto,q_auto,w_1200/hero_rh485e");
+    }
 }
 
-.hero-image.full-bleed {
-  width: 100vw;
-  max-width: none;
-  margin-left: calc(50% - 50vw);
-  margin-right: calc(50% - 50vw);
-  object-fit: cover;
+/* Mobile - Load 800px image and adjust height */
+@media (max-width: 768px) {
+    .hero {
+        background-image:
+                linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+                url("https://res.cloudinary.com/drl126ccs/image/upload/f_auto,q_auto,w_800/hero_rh485e");
+        height: 60vh; /* Shorter height for better mobile UX */
+    }
 }
+
+/* 3. HERO CONTENT POSITIONING */
 
 .hero-moto {
-  position: absolute;
-  left: 20px;
-  top: 50%;
-  transform: translateY(-50%);
-  text-align: left;
-  padding: 8px;
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    text-align: left;
+    padding: 8px;
+    max-width: 90%; /* Prevents text from hitting right edge */
 }
 
 .hero-title {
-  font-family: 'Roboto Mono', monospace;
-  font-weight: 700;
-  letter-spacing: 4px;
-  text-transform: uppercase;
-  color: var(--accent);
-  font-size: clamp(20px, 3.2vw, 48px);
-  line-height: 1;
-  margin: 0;
-}
-.hero h1 {
-  display: inline-block;
-  padding: 10em 21em 10em 0;  /* omni-directional padding */
-
-  background: radial-gradient(
-          ellipse at center,
-          rgba(0, 0, 0, 0.9) 0%,
-          rgba(0, 0, 0, 0.8575) 5%,
-          rgba(0, 0, 0, 0.815) 10%,
-          rgba(0, 0, 0, 0.7725) 15%,
-          rgba(0, 0, 0, 0.73) 20%,
-          rgba(0, 0, 0, 0.6875) 25%,
-          rgba(0, 0, 0, 0.645) 30%,
-          rgba(0, 0, 0, 0.6025) 35%,
-          rgba(0, 0, 0, 0.56) 40%,
-          rgba(0, 0, 0, 0.5175) 45%,
-          rgba(0, 0, 0, 0.475) 50%,
-          rgba(0, 0, 0, 0.4325) 55%,
-          rgba(0, 0, 0, 0.39) 60%,
-          rgba(0, 0, 0, 0.3475) 65%,
-          rgba(0, 0, 0, 0.305) 70%,
-          rgba(0, 0, 0, 0.2625) 75%,
-          rgba(0, 0, 0, 0.22) 80%,
-          rgba(0, 0, 0, 0.1775) 85%,
-          rgba(0, 0, 0, 0.135) 90%,
-          rgba(0, 0, 0, 0.0925) 95%,
-          rgba(0, 0, 0, 0.0) 100%
-  );
-
-  border-radius: 100px;
-  background-clip: padding-box;
-
-  text-align: center;
-  line-height: 1.2em; /* keeps multi-line headers neat */
+    font-family: 'Roboto Mono', monospace;
+    font-weight: 700;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--accent, #ffffff); /* Fallback to white if var is missing */
+    font-size: clamp(24px, 4vw, 48px);
+    line-height: 1.1;
+    margin: 0;
 }
 
+/* 4. UTILITY CLASSES */
 
+.hero-image.full-bleed {
+    width: 100vw;
+    max-width: none;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    object-fit: cover;
+}
 
 article p {
-  padding: 10px;
-  border: 1px solid var(--accent);
-  border-radius: 10px;
+    padding: 10px;
+    border: 1px solid var(--accent);
+    border-radius: 10px;
 }
