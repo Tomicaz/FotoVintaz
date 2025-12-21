@@ -54,7 +54,6 @@
     if (preloadCache.has(optimizedUrl)) return preloadCache.get(optimizedUrl);
     const img = new Image();
     img.src = optimizedUrl;
-    // We use decode() to ensure the browser has the image ready in memory
     const promise = img.decode().then(() => img).catch(() => img);
     preloadCache.set(optimizedUrl, promise);
     return promise;
@@ -75,16 +74,12 @@
     const capText = capElement ? capElement.textContent : "";
 
     const frame = document.createElement('div');
-    // REMOVED 'photo-frame' from initial class list to prevent showing the white box early
     frame.className = 'gv-content-item';
 
-    // START HIDDEN
+    // ATOMIC HIDE: Explicitly no width/height until ready
     frame.style.opacity = '0';
+    frame.style.visibility = 'hidden';
     frame.style.transition = 'opacity 0.4s ease, transform 650ms cubic-bezier(0.16, 1, 0.3, 1)';
-
-    if (thumb.naturalWidth > 0) {
-      frame.style.aspectRatio = `${thumb.naturalWidth} / ${thumb.naturalHeight}`;
-    }
 
     const imgContainer = document.createElement('div');
     imgContainer.className = 'gv-img-container';
@@ -103,21 +98,21 @@
     fullImg.className = 'gv-image gv-image-full';
     fullImg.src = fullSrc;
 
-    // Logic to show frame ONLY when full image is ready
     const reveal = () => {
-      // Add the visual frame (background/shadow) ONLY when the image is ready
+      // Fix for iOS Resizing: Apply aspect ratio ONLY at reveal time
+      if (thumb.naturalWidth > 0) {
+        frame.style.aspectRatio = `${thumb.naturalWidth} / ${thumb.naturalHeight}`;
+      }
       frame.classList.add('photo-frame');
       fullImg.classList.add('gv-loaded');
+      frame.style.visibility = 'visible';
       frame.style.opacity = '1';
     };
 
     if (fullImg.complete) {
       reveal();
     } else {
-      // Use decode() for a smoother "ready" state than just 'onload'
-      fullImg.decode()
-          .then(reveal)
-          .catch(reveal); // Show anyway if decode fails
+      fullImg.decode().then(reveal).catch(reveal);
     }
 
     imgContainer.append(thumbImg, fullImg);
@@ -140,14 +135,14 @@
     const oldFrame = viewer.querySelector('.gv-content-item');
     currentIndex = (currentIndex + direction + prints.length) % prints.length;
 
-    // Wait for the next image to be cached/decoded before starting animation
     await preloadImage(currentIndex);
 
     const newFrame = createFrame(currentIndex);
     newFrame.classList.add(direction === 1 ? 'enter-right' : 'enter-left');
     viewer.appendChild(newFrame);
 
-    void newFrame.offsetWidth;
+    // FORCE LAYOUT: Prevents iOS from batching the creation and animation
+    void newFrame.offsetHeight;
 
     requestAnimationFrame(() => {
       if (oldFrame) {
@@ -200,7 +195,6 @@
     currentIndex = index;
     viewer.innerHTML = '';
 
-    // Pre-decoding the first image before showing the overlay ensures a smooth entrance
     await preloadImage(index);
 
     viewer.appendChild(createFrame(index));
