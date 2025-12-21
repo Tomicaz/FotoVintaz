@@ -11,7 +11,6 @@
   let touchStartX = 0;
   let touchEndX = 0;
 
-  // Thin Minimal SVGs
   const icons = {
     left: `<svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>`,
     right: `<svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>`,
@@ -48,7 +47,6 @@
     if (index < 0 || index >= prints.length) return;
     const url = getOptimizedUrl(prints[index].getAttribute('href'));
     if (preloadCache.has(url)) return preloadCache.get(url);
-
     const img = new Image();
     img.src = url;
     const p = img.decode().then(() => img).catch(() => img);
@@ -66,24 +64,31 @@
     const frame = document.createElement('div');
     frame.className = 'gv-content-item photo-frame';
 
+    // CRITICAL FIX: Set width/height immediately from thumb to prevent resizing
+    // We use the thumbnail's bounding box as the blueprint
+    const thumbRect = thumb.getBoundingClientRect();
+    const ratio = thumb.naturalWidth / thumb.naturalHeight;
+
+    // Determine the max width the image should take based on screen
+    const screenW = window.innerWidth * 0.9;
+    const screenH = window.innerHeight * 0.72;
+
+    let targetW = screenH * ratio;
+    if (targetW > screenW) targetW = screenW;
+
+    frame.style.width = `${Math.round(targetW)}px`;
+
     const imgContainer = document.createElement('div');
     imgContainer.className = 'gv-img-container';
-    imgContainer.style.cursor = 'zoom-in';
-    imgContainer.onclick = (e) => {
-      e.stopPropagation();
-      window.open(originalSrc, '_blank');
-    };
+    imgContainer.onclick = (e) => { e.stopPropagation(); window.open(originalSrc, '_blank'); };
 
     const thumbImg = document.createElement('img');
     thumbImg.className = 'gv-image';
     thumbImg.src = thumb.src;
-    thumbImg.loading = "eager";
 
     const fullImg = document.createElement('img');
     fullImg.className = 'gv-image gv-image-full';
     fullImg.src = fullSrc;
-
-    // Smooth transition between low and high res
     fullImg.onload = () => fullImg.classList.add('gv-loaded');
 
     imgContainer.append(thumbImg, fullImg);
@@ -95,11 +100,6 @@
       cap.textContent = capText;
       frame.append(cap);
     }
-
-    // Wait for thumb to be ready to show the frame as one unit
-    requestAnimationFrame(() => {
-      frame.classList.add('ready');
-    });
 
     return frame;
   }
@@ -115,7 +115,6 @@
     newFrame.classList.add(direction === 1 ? 'enter-right' : 'enter-left');
     viewer.appendChild(newFrame);
 
-    // Trigger reflow
     void newFrame.offsetWidth;
 
     requestAnimationFrame(() => {
@@ -156,7 +155,7 @@
     overlay.addEventListener('touchend', e => {
       touchEndX = e.changedTouches[0].screenX;
       const diff = touchStartX - touchEndX;
-      if (Math.abs(diff) > 60) navigate(diff > 0 ? 1 : -1);
+      if (Math.abs(diff) > 50) navigate(diff > 0 ? 1 : -1);
     }, {passive: true});
 
     overlay.onclick = (e) => { if (e.target === overlay || e.target === viewer) closeOverlay(); };
@@ -168,10 +167,13 @@
     viewer.innerHTML = '';
     const firstFrame = createFrame(index);
     viewer.appendChild(firstFrame);
-    overlay.style.display = 'flex';
+    overlay.style.display = 'block';
     document.body.style.overflow = 'hidden';
 
-    // Preload neighbors
+    requestAnimationFrame(() => {
+      firstFrame.classList.add('ready');
+    });
+
     preloadImage((index + 1) % prints.length);
     preloadImage((index - 1 + prints.length) % prints.length);
   }
@@ -189,7 +191,7 @@
   });
 
   document.addEventListener('keydown', (e) => {
-    if (overlay?.style.display === 'flex') {
+    if (overlay?.style.display === 'block') {
       if (e.key === 'ArrowLeft') navigate(-1);
       if (e.key === 'ArrowRight') navigate(1);
       if (e.key === 'Escape') closeOverlay();
