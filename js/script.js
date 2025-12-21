@@ -8,36 +8,34 @@
   const preloadCache = new Map();
   const dwellTimeouts = new Map();
 
-  // SWIPE LOGIC VARS
   let touchStartX = 0;
   let touchEndX = 0;
 
-  // --- 1. CLOUDINARY URL OPTIMIZER ---
+  // Thin Minimal SVGs
+  const icons = {
+    left: `<svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>`,
+    right: `<svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>`,
+    close: `<svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>`
+  };
+
   function getOptimizedUrl(url) {
-    if (!url.includes('cloudinary.com')) return url;
-    return url.replace('/upload/', '/upload/q_auto,f_auto,w_2000,c_limit/');
+    if (!url || !url.includes('cloudinary.com')) return url;
+    return url.replace('/upload/', '/upload/q_auto:good,f_auto,w_1800,c_limit/');
   }
 
-  // --- 2. SCROLL REVEAL (0.5s DWELL) ---
   function initScrollReveal() {
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
-        const target = entry.target;
         if (entry.isIntersecting) {
+          const target = entry.target;
           if (target.classList.contains('visible')) return;
           const timeout = setTimeout(() => {
             target.classList.add('visible');
-            dwellTimeouts.delete(target);
           }, 500);
           dwellTimeouts.set(target, timeout);
-        } else {
-          if (dwellTimeouts.has(target)) {
-            clearTimeout(dwellTimeouts.get(target));
-            dwellTimeouts.delete(target);
-          }
         }
       });
-    }, { threshold: 0.1 });
+    }, { threshold: 0.05 });
 
     prints.forEach(p => {
       const img = p.querySelector('img');
@@ -46,59 +44,47 @@
     });
   }
 
-  // --- 3. PRELOADING ---
   async function preloadImage(index) {
     if (index < 0 || index >= prints.length) return;
-    const rawUrl = prints[index].getAttribute('href');
-    const optimizedUrl = getOptimizedUrl(rawUrl);
-    if (preloadCache.has(optimizedUrl)) return preloadCache.get(optimizedUrl);
+    const url = getOptimizedUrl(prints[index].getAttribute('href'));
+    if (preloadCache.has(url)) return preloadCache.get(url);
+
     const img = new Image();
-    img.src = optimizedUrl;
-    const promise = img.decode().then(() => img).catch(() => img);
-    preloadCache.set(optimizedUrl, promise);
-    return promise;
+    img.src = url;
+    const p = img.decode().then(() => img).catch(() => img);
+    preloadCache.set(url, p);
+    return p;
   }
 
-  function preloadNeighbors(index) {
-    preloadImage((index + 1) % prints.length);
-    preloadImage((index - 1 + prints.length) % prints.length);
-  }
-
-  // --- 4. CREATE MODAL FRAME ---
   function createFrame(index) {
     const anchor = prints[index];
     const thumb = anchor.querySelector('img');
     const fullSrc = getOptimizedUrl(anchor.getAttribute('href'));
-    const originalSrc = anchor.getAttribute('href'); // For opening in new tab
-    const capElement = anchor.querySelector('.print-caption');
-    const capText = capElement ? capElement.textContent : "";
+    const originalSrc = anchor.getAttribute('href');
+    const capText = anchor.querySelector('.print-caption')?.textContent || "";
 
     const frame = document.createElement('div');
     frame.className = 'gv-content-item photo-frame';
-    if (thumb.naturalWidth > 0) {
-      frame.style.aspectRatio = `${thumb.naturalWidth} / ${thumb.naturalHeight}`;
-    }
 
     const imgContainer = document.createElement('div');
     imgContainer.className = 'gv-img-container';
-    imgContainer.style.cursor = 'zoom-in'; // Visual hint that it's clickable
-
-    // NEW FEATURE: Open full res on click
+    imgContainer.style.cursor = 'zoom-in';
     imgContainer.onclick = (e) => {
-      e.stopPropagation(); // Prevent closing the modal
+      e.stopPropagation();
       window.open(originalSrc, '_blank');
     };
 
     const thumbImg = document.createElement('img');
     thumbImg.className = 'gv-image';
     thumbImg.src = thumb.src;
+    thumbImg.loading = "eager";
 
     const fullImg = document.createElement('img');
     fullImg.className = 'gv-image gv-image-full';
     fullImg.src = fullSrc;
 
-    if (fullImg.complete) fullImg.classList.add('gv-loaded');
-    else fullImg.onload = () => fullImg.classList.add('gv-loaded');
+    // Smooth transition between low and high res
+    fullImg.onload = () => fullImg.classList.add('gv-loaded');
 
     imgContainer.append(thumbImg, fullImg);
     frame.append(imgContainer);
@@ -109,10 +95,15 @@
       cap.textContent = capText;
       frame.append(cap);
     }
+
+    // Wait for thumb to be ready to show the frame as one unit
+    requestAnimationFrame(() => {
+      frame.classList.add('ready');
+    });
+
     return frame;
   }
 
-  // --- 5. NAVIGATION ---
   async function navigate(direction) {
     if (isAnimating) return;
     isAnimating = true;
@@ -120,45 +111,39 @@
     const oldFrame = viewer.querySelector('.gv-content-item');
     currentIndex = (currentIndex + direction + prints.length) % prints.length;
 
-    await preloadImage(currentIndex);
     const newFrame = createFrame(currentIndex);
     newFrame.classList.add(direction === 1 ? 'enter-right' : 'enter-left');
     viewer.appendChild(newFrame);
 
+    // Trigger reflow
     void newFrame.offsetWidth;
 
     requestAnimationFrame(() => {
-      if (oldFrame) oldFrame.classList.add(direction === 1 ? 'exit-left' : 'exit-right');
+      if (oldFrame) {
+        oldFrame.classList.add(direction === 1 ? 'exit-left' : 'exit-right');
+        oldFrame.classList.remove('ready');
+      }
       newFrame.classList.remove('enter-right', 'enter-left');
-      newFrame.style.transform = 'translate3d(0, 0, 0)';
-      newFrame.style.opacity = '1';
+      newFrame.classList.add('ready');
     });
 
     setTimeout(() => {
       if (oldFrame) oldFrame.remove();
       isAnimating = false;
-      preloadNeighbors(currentIndex);
-    }, 650);
+      preloadImage((currentIndex + 1) % prints.length);
+      preloadImage((currentIndex - 1 + prints.length) % prints.length);
+    }, 600);
   }
 
-  // --- 6. SWIPE GESTURES ---
-  function handleSwipe() {
-    const threshold = 50;
-    if (touchEndX < touchStartX - threshold) navigate(1);
-    if (touchEndX > touchStartX + threshold) navigate(-1);
-  }
-
-  // --- 7. MODAL CORE ---
   function initModal() {
     if (overlay) return;
     overlay = document.createElement('div');
     overlay.className = 'gv-overlay';
-    // Minimalist thin characters
     overlay.innerHTML = `
-      <button class="gv-close" aria-label="Close">x</button>
-      <button class="gv-arrow gv-arrow--left" aria-label="Prev">&lt;</button>
+      <button class="gv-close">${icons.close}</button>
+      <button class="gv-arrow gv-arrow--left">${icons.left}</button>
       <div class="gv-viewer"></div>
-      <button class="gv-arrow gv-arrow--right" aria-label="Next">&gt;</button>
+      <button class="gv-arrow gv-arrow--right">${icons.right}</button>
     `;
     document.body.appendChild(overlay);
     viewer = overlay.querySelector('.gv-viewer');
@@ -168,7 +153,12 @@
     overlay.querySelector('.gv-arrow--right').onclick = (e) => { e.stopPropagation(); navigate(1); };
 
     overlay.addEventListener('touchstart', e => touchStartX = e.changedTouches[0].screenX, {passive: true});
-    overlay.addEventListener('touchend', e => { touchEndX = e.changedTouches[0].screenX; handleSwipe(); }, {passive: true});
+    overlay.addEventListener('touchend', e => {
+      touchEndX = e.changedTouches[0].screenX;
+      const diff = touchStartX - touchEndX;
+      if (Math.abs(diff) > 60) navigate(diff > 0 ? 1 : -1);
+    }, {passive: true});
+
     overlay.onclick = (e) => { if (e.target === overlay || e.target === viewer) closeOverlay(); };
   }
 
@@ -176,10 +166,14 @@
     initModal();
     currentIndex = index;
     viewer.innerHTML = '';
-    viewer.appendChild(createFrame(index));
+    const firstFrame = createFrame(index);
+    viewer.appendChild(firstFrame);
     overlay.style.display = 'flex';
     document.body.style.overflow = 'hidden';
-    preloadNeighbors(index);
+
+    // Preload neighbors
+    preloadImage((index + 1) % prints.length);
+    preloadImage((index - 1 + prints.length) % prints.length);
   }
 
   function closeOverlay() {
@@ -190,7 +184,6 @@
     isAnimating = false;
   }
 
-  // --- INIT ---
   prints.forEach((a, i) => {
     a.onclick = (e) => { e.preventDefault(); openOverlay(i); };
   });
