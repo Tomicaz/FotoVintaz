@@ -76,10 +76,17 @@
     const frame = document.createElement('div');
     frame.className = 'gv-content-item';
 
-    // ATOMIC HIDE: Explicitly no width/height until ready
-    frame.style.opacity = '0';
-    frame.style.visibility = 'hidden';
-    frame.style.transition = 'opacity 0.4s ease, transform 650ms cubic-bezier(0.16, 1, 0.3, 1)';
+    // FIXED: Using max-content instead of 100% to prevent white filler on desktop
+    // while keeping flex auto and margins for centering.
+    frame.style.cssText = `
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.4s ease, transform 650ms cubic-bezier(0.16, 1, 0.3, 1);
+      width: max-content;
+      max-width: 94vw;
+      flex: 0 0 auto;
+      margin: auto;
+    `;
 
     const imgContainer = document.createElement('div');
     imgContainer.className = 'gv-img-container';
@@ -99,7 +106,6 @@
     fullImg.src = fullSrc;
 
     const reveal = () => {
-      // Fix for iOS Resizing: Apply aspect ratio ONLY at reveal time
       if (thumb.naturalWidth > 0) {
         frame.style.aspectRatio = `${thumb.naturalWidth} / ${thumb.naturalHeight}`;
       }
@@ -141,8 +147,8 @@
     newFrame.classList.add(direction === 1 ? 'enter-right' : 'enter-left');
     viewer.appendChild(newFrame);
 
-    // FORCE LAYOUT: Prevents iOS from batching the creation and animation
-    void newFrame.offsetHeight;
+    void newFrame.offsetWidth;
+    void newFrame.getBoundingClientRect();
 
     requestAnimationFrame(() => {
       if (oldFrame) {
