@@ -8,9 +8,11 @@
   const preloadCache = new Map();
   const dwellTimeouts = new Map();
 
-  // SWIPE LOGIC VARS
-  let touchStartX = 0;
-  let touchEndX = 0;
+  // --- SCROLL HEADER LOGIC VARS ---
+  const header = document.querySelector('.site-header');
+  let lastScrollY = window.scrollY;
+  let scrollDistance = 0;
+  const SCROLL_THRESHOLD = 20; // 20px requirement
 
   // --- 1. CLOUDINARY URL OPTIMIZER ---
   function getOptimizedUrl(url) {
@@ -76,8 +78,6 @@
     const frame = document.createElement('div');
     frame.className = 'gv-content-item';
 
-    // FIXED: Using max-content instead of 100% to prevent white filler on desktop
-    // while keeping flex auto and margins for centering.
     frame.style.cssText = `
       opacity: 0;
       visibility: hidden;
@@ -167,6 +167,8 @@
   }
 
   // --- 6. SWIPE GESTURES ---
+  let touchStartX = 0;
+  let touchEndX = 0;
   function handleSwipe() {
     const threshold = 50;
     if (touchEndX < touchStartX - threshold) navigate(1);
@@ -217,6 +219,37 @@
     isAnimating = false;
   }
 
+  // --- 8. HEADER SCROLL ANIMATION ---
+  function handleHeaderScroll() {
+    if (!header) return;
+
+    const currentScrollY = window.scrollY;
+    const diff = currentScrollY - lastScrollY;
+
+    // Accumulate scroll distance in the current direction
+    if ((diff > 0 && scrollDistance < 0) || (diff < 0 && scrollDistance > 0)) {
+      scrollDistance = 0; // Reset if direction changed
+    }
+    scrollDistance += diff;
+
+    // Trigger action only if distance exceeds threshold
+    if (Math.abs(scrollDistance) >= SCROLL_THRESHOLD) {
+      if (scrollDistance > 0 && currentScrollY > 100) {
+        // Downward scroll
+        const navCheck = document.getElementById('nav-check');
+        if (navCheck && !navCheck.checked) {
+          header.classList.add('hidden');
+        }
+      } else if (scrollDistance < 0) {
+        // Upward scroll
+        header.classList.remove('hidden');
+      }
+      scrollDistance = 0; // Reset after triggering
+    }
+
+    lastScrollY = currentScrollY;
+  }
+
   // --- INIT ---
   prints.forEach((a, i) => {
     a.onclick = (e) => { e.preventDefault(); openOverlay(i); };
@@ -229,6 +262,8 @@
       if (e.key === 'Escape') closeOverlay();
     }
   });
+
+  window.addEventListener('scroll', handleHeaderScroll, { passive: true });
 
   initScrollReveal();
 })();
