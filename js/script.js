@@ -75,9 +75,10 @@
     const capText = capElement ? capElement.textContent : "";
 
     const frame = document.createElement('div');
-    frame.className = 'gv-content-item photo-frame';
+    // REMOVED 'photo-frame' from initial class list to prevent showing the white box early
+    frame.className = 'gv-content-item';
 
-    // START HIDDEN: This prevents the "empty frame" flash
+    // START HIDDEN
     frame.style.opacity = '0';
     frame.style.transition = 'opacity 0.4s ease, transform 650ms cubic-bezier(0.16, 1, 0.3, 1)';
 
@@ -104,6 +105,8 @@
 
     // Logic to show frame ONLY when full image is ready
     const reveal = () => {
+      // Add the visual frame (background/shadow) ONLY when the image is ready
+      frame.classList.add('photo-frame');
       fullImg.classList.add('gv-loaded');
       frame.style.opacity = '1';
     };
@@ -153,7 +156,6 @@
       }
       newFrame.classList.remove('enter-right', 'enter-left');
       newFrame.style.transform = 'translate3d(0, 0, 0)';
-      // Note: Opacity is handled by the reveal() function inside createFrame
     });
 
     setTimeout(() => {
