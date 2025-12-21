@@ -54,6 +54,7 @@
     if (preloadCache.has(optimizedUrl)) return preloadCache.get(optimizedUrl);
     const img = new Image();
     img.src = optimizedUrl;
+    // We use decode() to ensure the browser has the image ready in memory
     const promise = img.decode().then(() => img).catch(() => img);
     preloadCache.set(optimizedUrl, promise);
     return promise;
@@ -69,23 +70,27 @@
     const anchor = prints[index];
     const thumb = anchor.querySelector('img');
     const fullSrc = getOptimizedUrl(anchor.getAttribute('href'));
-    const originalSrc = anchor.getAttribute('href'); // For opening in new tab
+    const originalSrc = anchor.getAttribute('href');
     const capElement = anchor.querySelector('.print-caption');
     const capText = capElement ? capElement.textContent : "";
 
     const frame = document.createElement('div');
     frame.className = 'gv-content-item photo-frame';
+
+    // START HIDDEN: This prevents the "empty frame" flash
+    frame.style.opacity = '0';
+    frame.style.transition = 'opacity 0.4s ease, transform 650ms cubic-bezier(0.16, 1, 0.3, 1)';
+
     if (thumb.naturalWidth > 0) {
       frame.style.aspectRatio = `${thumb.naturalWidth} / ${thumb.naturalHeight}`;
     }
 
     const imgContainer = document.createElement('div');
     imgContainer.className = 'gv-img-container';
-    imgContainer.style.cursor = 'zoom-in'; // Visual hint that it's clickable
+    imgContainer.style.cursor = 'zoom-in';
 
-    // NEW FEATURE: Open full res on click
     imgContainer.onclick = (e) => {
-      e.stopPropagation(); // Prevent closing the modal
+      e.stopPropagation();
       window.open(originalSrc, '_blank');
     };
 
@@ -97,8 +102,20 @@
     fullImg.className = 'gv-image gv-image-full';
     fullImg.src = fullSrc;
 
-    if (fullImg.complete) fullImg.classList.add('gv-loaded');
-    else fullImg.onload = () => fullImg.classList.add('gv-loaded');
+    // Logic to show frame ONLY when full image is ready
+    const reveal = () => {
+      fullImg.classList.add('gv-loaded');
+      frame.style.opacity = '1';
+    };
+
+    if (fullImg.complete) {
+      reveal();
+    } else {
+      // Use decode() for a smoother "ready" state than just 'onload'
+      fullImg.decode()
+          .then(reveal)
+          .catch(reveal); // Show anyway if decode fails
+    }
 
     imgContainer.append(thumbImg, fullImg);
     frame.append(imgContainer);
@@ -120,7 +137,9 @@
     const oldFrame = viewer.querySelector('.gv-content-item');
     currentIndex = (currentIndex + direction + prints.length) % prints.length;
 
+    // Wait for the next image to be cached/decoded before starting animation
     await preloadImage(currentIndex);
+
     const newFrame = createFrame(currentIndex);
     newFrame.classList.add(direction === 1 ? 'enter-right' : 'enter-left');
     viewer.appendChild(newFrame);
@@ -128,10 +147,13 @@
     void newFrame.offsetWidth;
 
     requestAnimationFrame(() => {
-      if (oldFrame) oldFrame.classList.add(direction === 1 ? 'exit-left' : 'exit-right');
+      if (oldFrame) {
+        oldFrame.classList.add(direction === 1 ? 'exit-left' : 'exit-right');
+        oldFrame.style.opacity = '0';
+      }
       newFrame.classList.remove('enter-right', 'enter-left');
       newFrame.style.transform = 'translate3d(0, 0, 0)';
-      newFrame.style.opacity = '1';
+      // Note: Opacity is handled by the reveal() function inside createFrame
     });
 
     setTimeout(() => {
@@ -153,7 +175,6 @@
     if (overlay) return;
     overlay = document.createElement('div');
     overlay.className = 'gv-overlay';
-    // Minimalist thin characters
     overlay.innerHTML = `
       <button class="gv-close" aria-label="Close">x</button>
       <button class="gv-arrow gv-arrow--left" aria-label="Prev">&lt;</button>
@@ -172,10 +193,14 @@
     overlay.onclick = (e) => { if (e.target === overlay || e.target === viewer) closeOverlay(); };
   }
 
-  function openOverlay(index) {
+  async function openOverlay(index) {
     initModal();
     currentIndex = index;
     viewer.innerHTML = '';
+
+    // Pre-decoding the first image before showing the overlay ensures a smooth entrance
+    await preloadImage(index);
+
     viewer.appendChild(createFrame(index));
     overlay.style.display = 'flex';
     document.body.style.overflow = 'hidden';
